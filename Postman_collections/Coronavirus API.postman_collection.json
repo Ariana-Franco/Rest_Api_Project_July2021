@@ -1,0 +1,574 @@
+{
+	"info": {
+		"_postman_id": "ec6e8801-7a6b-45ca-b9e9-9c6924f2bbe4",
+		"name": "Coronavirus API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Feeds",
+			"item": [
+				{
+					"name": "Latest data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response is 200\", () => {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.response.code).to.eql(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"})",
+									"",
+									"pm.test(\"Validate total_cases is number\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data.summary.total_cases).to.be.a('number');",
+									"});",
+									"",
+									"pm.test(\"Validate response has body\" , function(){",
+									"    pm.response.to.have.body;",
+									"});",
+									"",
+									"pm.test(\"Validate response has any key\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data).to.have.any.keys('summary', 'change','regions');",
+									"    pm.expect(responseJson.data).to.have.property('summary');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/summary/latest",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"summary",
+								"latest"
+							]
+						},
+						"description": "Get latest report about world coronavirus situation"
+					},
+					"response": []
+				},
+				{
+					"name": "Region statistics",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response time is less than 800ms\", () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(800);",
+									"})",
+									"",
+									"pm.test(\"Validate status response is 200 ok\", () => {",
+									"    pm.response.to.be.ok;",
+									"    pm.response.to.have.status(200);",
+									"    pm.expect(pm.response.code).to.eql(200);",
+									"    pm.response.to.have.status(\"OK\");",
+									"})",
+									"",
+									"pm.test(\"Validate response data summary total_cases is a number\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data.summary.total_cases).to.be.a('number');",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/summary/region?region=florida&sub_areas=1",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"summary",
+								"region"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "florida"
+								},
+								{
+									"key": "sub_areas",
+									"value": "1"
+								},
+								{
+									"key": "date",
+									"value": "10-10-10",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Get latest report about coronavirus situation in `region`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Spots",
+			"item": [
+				{
+					"name": "Day",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response has a header Content-Type\", () => {",
+									"  pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Validate status response is 500\", () => {",
+									"    pm.response.to.have.status(500);",
+									"})",
+									"",
+									"pm.test(\"Validate response time is less than 700ms\", () => {",
+									"  pm.expect(pm.response.responseTime).to.be.below(700);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/spots/day?region=china",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spots",
+								"day"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "china"
+								}
+							]
+						},
+						"description": "Get spots for `date` and `region`"
+					},
+					"response": []
+				},
+				{
+					"name": "Week",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response is 200\", () => {",
+									"  pm.expect(pm.response.code).to.be.oneOf([200, 201,202]);",
+									"});",
+									"",
+									"pm.test(\"Validate response data is an object\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Validate response type is equal to stack\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.type).to.eql(\"stack\");",
+									"})",
+									"",
+									"pm.test(\"Validate response data '2021-07-13' is equal to 5833175\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data[\"2021-07-13\"].total_cases).to.eql(5833175);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/spots/week?region=russia",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spots",
+								"week"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "russia"
+								}
+							]
+						},
+						"description": "Get spots for last 7 days since `date` for `region`"
+					},
+					"response": []
+				},
+				{
+					"name": "Month",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response is ok\", () => {",
+									"    pm.response.to.have.status(\"OK\");",
+									"});",
+									"",
+									"pm.test(\"Validate response type is equal to stack\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.type).to.eql(\"stack\");",
+									"})",
+									"",
+									"pm.test(\"Validate response has body\", () => {",
+									"    pm.response.to.have.body;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/spots/month?region=us",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spots",
+								"month"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "us"
+								}
+							]
+						},
+						"description": "Get spots for last 30 days since `date` for `region`"
+					},
+					"response": []
+				},
+				{
+					"name": "Year",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response data is an object\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Validate response data '2021-07-14' is equal to 102373\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data[\"2021-07-14\"].total_cases).to.eql(102373);",
+									"})",
+									"",
+									"pm.test(\"Validate response ok\", () => {",
+									"    pm.response.to.have.status(\"OK\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{server}}/api/v1/spots/year?region=china",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spots",
+								"year"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "china"
+								}
+							]
+						},
+						"description": "Get spots for last 365 days since `date` for `region`"
+					},
+					"response": []
+				},
+				{
+					"name": "All available for region",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response data is an object\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Validate response has a header Content-Type\", () => {",
+									"  pm.response.to.have.header(\"Content-Type\");",
+									"});",
+									"",
+									"pm.test(\"Validate response is ok\", () => {",
+									"    pm.response.to.be.ok;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/api/v1/spots/region?region=china",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spots",
+								"region"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "china"
+								}
+							]
+						},
+						"description": "Get all available spots for region since first recorded cases"
+					},
+					"response": []
+				},
+				{
+					"name": "All available summary",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"",
+									"pm.test(\"Validate response data is an object\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data).to.be.a('object');",
+									"})",
+									"",
+									"pm.test(\"Validate response type is equal collection\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.type).to.eql(\"collection\");",
+									"})",
+									"",
+									"pm.test(\"Validate response data '2021-07-14' deaths is equal to 4045985\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data[\"2021-07-14\"].deaths).to.eql(4045985);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/api/v1/spots/summary",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"spots",
+								"summary"
+							]
+						},
+						"description": "Get all available summary spots since first recorded cases"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Regions",
+			"item": [
+				{
+					"name": "List supported regions",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Validate response data is an array\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data).to.be.a('array');",
+									"});",
+									"",
+									"pm.test(\"Validate response status is one of 200, 201, 202\", () => {",
+									"  pm.expect(pm.response.code).to.be.oneOf([200, 201,202]);",
+									"});",
+									"",
+									"pm.test(\"Validate response data[0] name is Taiwan\", () => {",
+									"    const responseJson = pm.response.json();",
+									"    pm.expect(responseJson.data[0].name).to.eql('Taiwan');",
+									"});",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{server}}/api/v1/regions",
+							"host": [
+								"{{server}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"regions"
+							]
+						},
+						"description": "List all supported regions"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Ping",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate response has a header Content-Type\", () => {",
+							"  pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Validate response include pong\", () => {",
+							"    console.log(pm.response);",
+							"    pm.expect(pm.response.text()).to.include(\"pong\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{server}}/api/v1/ping",
+					"host": [
+						"{{server}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

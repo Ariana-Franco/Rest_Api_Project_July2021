@@ -28,7 +28,10 @@ public class API_test {
     static private String addressID;
     static private String alertID;
 
-
+    /**
+     * Get token Fails
+     * POST
+     */
     @Test
     public void t01GetTokenFail() {
         //Request an account token without authorization header
@@ -48,6 +51,10 @@ public class API_test {
         assertEquals("VALIDATION_FAILED", errorCode);
     }
 
+    /**
+     * Get Token Success
+     * GET
+     */
     @Test
     public void t02GetTokenCorrect() {
         //Request an account token with an authorization header
@@ -82,6 +89,10 @@ public class API_test {
 
     }
 
+    /**
+     * Create User Fails
+     * POST
+     */
     @Test
     public void t03CreateUserFail() {
         //Create a user without authorization header
@@ -105,6 +116,10 @@ public class API_test {
         assertEquals("VALIDATION_FAILED", errorCode);
     }
 
+    /**
+     * Create User Success
+     * POST
+     */
     @Test
     public void t04CreateUser() {
         //successfully create a new user, retrieve its data
@@ -120,6 +135,7 @@ public class API_test {
                 .contentType("application/json")
                 .body(bodyRequest)
                 .post();
+
         //validations
         String bodyResponse = response.getBody().asString();
         System.out.println("Body response: " + bodyResponse);
@@ -129,6 +145,10 @@ public class API_test {
         assertTrue(bodyResponse.contains("ACCOUNT_VERIFICATION_REQUIRED"));
     }
 
+    /**
+     * Update Phone Number Success
+     * PATCH
+     */
     @Test
     public void t05UpdatePhoneNumber() {
         //Update user created adding the phone number
@@ -155,8 +175,12 @@ public class API_test {
         assertEquals(userPhone, "" + phone);
     }
 
+    /**
+     * Adding new Ad Fails Success
+     * POST
+     */
     @Test
-    public void t06AddNewAdFail() {
+    public void t06AdNewAddFail() {
         //Adding a new add with an invalid token should fail
         newText = "" + (Math.random() * 99999999 + 999999999);
         RestAssured.baseURI = String.format("%s/nga/api/v1/private/accounts/%s/klfst", baseUrl, accountID);
@@ -190,6 +214,10 @@ public class API_test {
         assertEquals("UNAUTHORIZED", errorCode);
     }
 
+    /**
+     * Adding New Ad Success
+     * POST
+     */
     @Test
     public void t07AddNewAd() {
         //Adding a new add with a valid token
@@ -230,9 +258,13 @@ public class API_test {
         assertTrue(bodyResponse.contains("ad_id"));
     }
 
+    /**
+     * Updating an Ad Success
+     * POST
+     */
     @Test
     public void t08UpdateAd() {
-        //Change a text on the description of the ad
+        //Change a text on the description of the add
         newText = "" + (Math.random() * 99999999 + 999999999);
         RestAssured.baseURI = String.format("%s/nga/api/v1/private/accounts/%s/klfst/%s/actions", baseUrl, accountID, adID);
         String bodyRequest = "{\"ad\":" +
@@ -264,6 +296,10 @@ public class API_test {
         assertEquals("edit", actionType);
     }
 
+    /**
+     * Get Address Fails
+     * GET
+     */
     @Test
     public void t09GetAddressFail() {
         //Getting user address with an invalid token should fail
@@ -285,6 +321,10 @@ public class API_test {
         assertEquals("Authorization failed", errorCode);
     }
 
+    /**
+     * User Has No Address Success
+     * GET
+     */
     @Test
     public void t10UserHasNoAddress() {
         //Getting user addresses should be an empty list
@@ -315,6 +355,10 @@ public class API_test {
         //assertEquals("[:]",addressesList);
     }
 
+    /**
+     * Updating User Address Success
+     * POST
+     */
     @Test
     public void t11UpdateUserAddress() {
         //Adding a new address to user
@@ -354,6 +398,10 @@ public class API_test {
         System.out.println("Address created with ID: " + addressID);
     }
 
+    /**
+     * Updating user Address Duplicate Success
+     * POST
+     */
     @Test
     public void t12UpdateUserAddressDuplicated() {
         //Trying to add same address should fail
@@ -394,6 +442,10 @@ public class API_test {
         //assertTrue(bodyResponse.contains("Duplicate"));
     }
 
+    /**
+     * Get Created Address Success
+     * GET
+     */
     @Test
     public void t13GetCreatedAddress() {
         //Use address id to get the user's address
@@ -418,6 +470,10 @@ public class API_test {
         assertTrue(respAddress.contains(addressID));
     }
 
+    /**
+     * Shop Not Found Success
+     * GET
+     */
     @Test
     public void t14ShopNotFound() {
         //Fail to found a shop with this account
@@ -437,8 +493,12 @@ public class API_test {
         assertEquals("Account not found", errorCode);
     }
 
+    /**
+     * Deleting Ad Success
+     * DELETE
+     */
     @Test
-    public void t15DeleteAd() {
+    public void t15DeleteAdd() {
         //Delete the ad created - possible fail with 403
         String bodyRequest = "{\"delete_reason\":{\"code\":\"5\"} }";
         RestAssured.baseURI = String.format("%s/nga/api/v1/private/accounts/%s/klfst/%s", baseUrl, accountID, adID);
@@ -466,6 +526,10 @@ public class API_test {
 
     }
 
+    /**
+     * Get Credits By User Success
+     * GET
+     */
     @Test
     public void t16GetCreditsByUserId() {
         RestAssured.baseURI = String.format("%s/credits/v1/private/accounts/%s", baseUrl, accountID);
@@ -484,6 +548,10 @@ public class API_test {
         assertEquals(0, balance);
     }
 
+    /**
+     * Deleting User Alert Fails
+     * DELETE
+     */
     @Test
     public void t17DeleteUserAlertFail() {
         RestAssured.baseURI = String.format("%s/alerts/v1/private/account/%s/alert/%s", baseUrl, uuid, alertID);
@@ -503,7 +571,8 @@ public class API_test {
     }
 
     /**
-     * Testing the creation of an alert into the user account
+     * Creating Alert Success
+     * POST
      */
     @Test
     public void t18CreateUserAlertSuccess() {
@@ -527,13 +596,15 @@ public class API_test {
         assertNotNull(alertID);
     }
 
+    /**
+     * Deleting Alert Success
+     * DELETE
+     */
     @Test
     public void t19DeleteUserAlertSuccess() {
         RestAssured.baseURI = String.format("%s/alerts/v1/private/account/%s/alert/%s", baseUrl, uuid, alertID);
-        //String bodyRequest = "{\"ad_listing_service_filters\":{\"region\":\"11\",\"category_lv0\":\"1000\",\"category_lv1\":\"1080\"}}";
 
         Response response = given().log().all()
-                //.body(bodyRequest)
                 .header("Authorization", "Basic " + token2)
                 .delete();
 
@@ -549,6 +620,10 @@ public class API_test {
         assertEquals("ok", status);
     }
 
+    /**
+     * Deleting Address Success
+     * DELETE
+     */
     @Test
     public void t20DeleteAddress() {
         //Delete the address created

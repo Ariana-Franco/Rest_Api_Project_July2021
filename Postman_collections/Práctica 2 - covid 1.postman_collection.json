@@ -1,0 +1,139 @@
+{
+	"info": {
+		"_postman_id": "e00ba144-9d40-4150-bc45-b654fbf24d15",
+		"name": "Práctica 2 - covid 1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get info by country name",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"//",
+							"pm.test(\"Test - Validar status código igual a ok\", function(){",
+							"    pm.response.to.be.ok;",
+							"})",
+							"",
+							"//validate status code = 200",
+							"pm.test(\"Test - Validar status código igual a 200\", function(){",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"//validate status code = 400",
+							"pm.test(\"Test - Validar status código igual a 400\", function(){",
+							"    //pm.response.to.have.status(400);",
+							"});",
+							"",
+							"pm.test(\"Test - Validar que tenga un body\" , function(){",
+							"    pm.response.to.have.body;",
+							"});",
+							"",
+							"pm.test(\"Test - Validar que tenga un body\" , function(){",
+							"    console.log('pm.response');",
+							"    console.log(pm.response);",
+							"    console.log(pm.response.json());",
+							"    console.log(pm.response.size());",
+							"    //pm.response.to.have.body;",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 300ms\", () => {",
+							"  pm.expect(pm.response.responseTime).to.be.below(300);",
+							"});",
+							"",
+							"",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://covid19-api.com/country?name=M%C3%A9xico&format=json",
+					"protocol": "https",
+					"host": [
+						"covid19-api",
+						"com"
+					],
+					"path": [
+						"country"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "M%C3%A9xico"
+						},
+						{
+							"key": "format",
+							"value": "json"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get info by country code",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://covid19-api.com/country/code?code=mx",
+					"protocol": "https",
+					"host": [
+						"covid19-api",
+						"com"
+					],
+					"path": [
+						"country",
+						"code"
+					],
+					"query": [
+						{
+							"key": "code",
+							"value": "mx"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get info by date",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://covid19-api.com/report/country/all?date=2020-08-01&date-format=YYYY-DD-MM",
+					"protocol": "https",
+					"host": [
+						"covid19-api",
+						"com"
+					],
+					"path": [
+						"report",
+						"country",
+						"all"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2020-08-01"
+						},
+						{
+							"key": "date-format",
+							"value": "YYYY-DD-MM"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

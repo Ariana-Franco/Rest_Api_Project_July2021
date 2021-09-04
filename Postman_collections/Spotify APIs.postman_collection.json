@@ -1,0 +1,416 @@
+{
+	"info": {
+		"_postman_id": "447b5d6c-6273-4556-8666-2729563ba4ba",
+		"name": "Spotify APIs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "tracks",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy/tracks?market=MX&limit=10&offset=5",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spotify",
+						"com"
+					],
+					"path": [
+						"v1",
+						"albums",
+						"4aawyAB9vmqN3uQ7FjRGTy",
+						"tracks"
+					],
+					"query": [
+						{
+							"key": "market",
+							"value": "MX"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "album by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.spotify.com/v1/albums/4aawyAB9vmqN3uQ7FjRGTy?market=MX",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spotify",
+						"com"
+					],
+					"path": [
+						"v1",
+						"albums",
+						"4aawyAB9vmqN3uQ7FjRGTy"
+					],
+					"query": [
+						{
+							"key": "market",
+							"value": "MX"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "several albums",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.spotify.com/v1/albums?ids=382ObEPsp2rxGrnsizN5TX%2C1A2GTWGtFfWp7KSQTwWOyo%2C2noRn2Aes5aoNVsU6iWThc&market=MX",
+					"protocol": "https",
+					"host": [
+						"api",
+						"spotify",
+						"com"
+					],
+					"path": [
+						"v1",
+						"albums"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "382ObEPsp2rxGrnsizN5TX%2C1A2GTWGtFfWp7KSQTwWOyo%2C2noRn2Aes5aoNVsU6iWThc"
+						},
+						{
+							"key": "market",
+							"value": "MX"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "error me",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response is unauthorized\", () => {",
+							"    pm.response.to.be.unauthorized;",
+							"});",
+							"",
+							"pm.test(\"Validate response data is an object\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.error).to.be.a('object');",
+							"});",
+							"",
+							"pm.test(\"Validate response error message equal to No token provided\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.error.message).to.eql(\"No token provided\");",
+							"});",
+							"",
+							"pm.test(\"Validate response include error\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    //deep = ===",
+							"    pm.expect(pm.response.text()).to.deep.include(\"error\");",
+							"});",
+							"",
+							"pm.test(\"Validate response time is less than 100ms\", () => {",
+							"  pm.expect(pm.response.responseTime).to.be.below(100);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url_spotify}}/v1/me",
+					"protocol": "https",
+					"host": [
+						"{{base_url_spotify}}"
+					],
+					"path": [
+						"v1",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "me",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response meta pagination page is equal to 1\", () => {",
+							"    pm.expect(responseJson.id).to.eql(\"h4zq0te21030dw7gansuolyi9\");",
+							"});",
+							"",
+							"pm.test(\"Validate response include equal\", () => {",
+							"    pm.expect(pm.response.text()).to.deep.include(\"email\");",
+							"});",
+							"",
+							"pm.test(\"Validate response include equal\", () => {",
+							"    const name = pm.environment.get(\"name\");",
+							"    pm.expect(responseJson.display_name).to.deep.eql(name);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url_spotify}}/v1/me",
+					"protocol": "https",
+					"host": [
+						"{{base_url_spotify}}"
+					],
+					"path": [
+						"v1",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user by id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token_user}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url_spotify}}/v1/users/h4zq0te21030dw7gansuolyi9",
+					"protocol": "https",
+					"host": [
+						"{{base_url_spotify}}"
+					],
+					"path": [
+						"v1",
+						"users",
+						"h4zq0te21030dw7gansuolyi9"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "artists",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url_spotify}}/v1/artists/0TnOYISbd1XYRBk9myaseg/albums?include_groups=single%2Cappears_on&market=MX&limit=10&offset=5&q",
+					"protocol": "https",
+					"host": [
+						"{{base_url_spotify}}"
+					],
+					"path": [
+						"v1",
+						"artists",
+						"0TnOYISbd1XYRBk9myaseg",
+						"albums"
+					],
+					"query": [
+						{
+							"key": "include_groups",
+							"value": "single%2Cappears_on"
+						},
+						{
+							"key": "market",
+							"value": "MX"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "5"
+						},
+						{
+							"key": "q",
+							"value": null
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "search",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url_spotify}}/v1/search?q=Muse&type=track%2Cartist&market=US&limit=10&offset=5",
+					"protocol": "https",
+					"host": [
+						"{{base_url_spotify}}"
+					],
+					"path": [
+						"v1",
+						"search"
+					],
+					"query": [
+						{
+							"key": "q",
+							"value": "Muse"
+						},
+						{
+							"key": "type",
+							"value": "track%2Cartist"
+						},
+						{
+							"key": "market",
+							"value": "US"
+						},
+						{
+							"key": "limit",
+							"value": "10"
+						},
+						{
+							"key": "offset",
+							"value": "5"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "albums contains",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "BQDc1DSHqNidwJlMebOwmD8MvTAjUMmOzyi0KejhVPC1fWAdKGtO3luZ6TYtGqYfnFh5IH4kg3zBAzjfa1PZh7xb-fryQE4HqYyuTa_bKNXVZBgwWppAwPpm3QU2mJXU-19ICg0ebms104Si0bmLp6wcecKe2N7sHjg1ibI7I1p_",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url_spotify}}/v1/me/albums/contains?ids=07bYtmE3bPsLB6ZbmmFi8d%2C48JYNjh7GMie6NjqYHMmtT%2C27cZdqrQiKt3IT00338dws",
+					"protocol": "https",
+					"host": [
+						"{{base_url_spotify}}"
+					],
+					"path": [
+						"v1",
+						"me",
+						"albums",
+						"contains"
+					],
+					"query": [
+						{
+							"key": "ids",
+							"value": "07bYtmE3bPsLB6ZbmmFi8d%2C48JYNjh7GMie6NjqYHMmtT%2C27cZdqrQiKt3IT00338dws"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
