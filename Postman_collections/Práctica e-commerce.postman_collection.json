@@ -1,0 +1,984 @@
+{
+	"info": {
+		"_postman_id": "0f2fbc48-ff22-4a85-a97b-da96c5839a4b",
+		"name": "Práctica e-commerce",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "List announcements",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate status response is 200\", () => {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Validate response is a json\", function(){",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response data items length is equal to 10\", () => {",
+							"    pm.expect(responseJson.data.items).to.have.lengthOf(10);",
+							"});",
+							"",
+							"pm.test(\"Validate response data items[0] subject is a string\", () => {",
+							"    pm.expect(responseJson.data.items[0].subject).to.be.a('string');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url}}/highlights/v1/public/highlights?prio=1&cat=1100&lim=10",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"highlights",
+						"v1",
+						"public",
+						"highlights"
+					],
+					"query": [
+						{
+							"key": "prio",
+							"value": "1"
+						},
+						{
+							"key": "cat",
+							"value": "1100"
+						},
+						{
+							"key": "lim",
+							"value": "10"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate status response is 401\", () => {",
+							"    pm.response.to.have.status(401);",
+							"});",
+							"",
+							"pm.test(\"Validate response is a json\", function(){",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Validate response include pong\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"error\");",
+							"});",
+							"",
+							"pm.test(\"Validate response meta pagination page is equal to 1\", () => {",
+							"    pm.expect(responseJson.error.code).to.eql('ACCOUNT_VERIFICATION_REQUIRED');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Crating a random number",
+							"let numRand = Math.floor(Math.random() * Math.floor(999999));",
+							"console.log(numRand);",
+							"",
+							"let password = numRand;",
+							"//ToString radix",
+							"//2 - The number will show as a binary value",
+							"//8 - The number will show as an octal value",
+							"//16 - The number will show as an hexadecimal value",
+							"let email = \"ventas_\" + numRand.toString(16) + \"@mailinator.com\";",
+							"console.log(email);",
+							"console.log(password);",
+							"//Setting the email value",
+							"",
+							"//Creating the string to code",
+							"let UTFBasic = email + \":\" + password;",
+							"//Coding the basic auth",
+							"let encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(UTFBasic));",
+							"",
+							"pm.environment.set('email', email);",
+							"pm.environment.set('password', password);",
+							"pm.environment.set('basic_encoded', encoded);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{basic_encoded}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"account\": {\"email\":\"{{email}}\"}\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/nga/api/v1.1/private/accounts?lang=es",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"nga",
+						"api",
+						"v1.1",
+						"private",
+						"accounts"
+					],
+					"query": [
+						{
+							"key": "lang",
+							"value": "es"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Account token",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"let email = pm.environment.get('emailUser');",
+							"let pass = pm.environment.get('passUser');",
+							"console.log(email);",
+							"console.log(pass);",
+							"let encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(email+\":\"+pass));",
+							"pm.environment.set(\"basic_encoded_verified\", encoded);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"const uuid = responseJson.account.uuid;",
+							"pm.environment.set('uuid', uuid);",
+							"",
+							"pm.test(\"Validate response is a json\", function(){",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Validate response access_token is a string\", () => {",
+							"    pm.expect(responseJson.access_token).to.be.a('string');",
+							"});",
+							"",
+							"pm.test(\"Validate response account email_verified is true\", () => {",
+							"  pm.expect(responseJson.account.email_verified).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{basic_encoded_verified}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/nga/api/v1.1/private/accounts?lang=es",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"nga",
+						"api",
+						"v1.1",
+						"private",
+						"accounts"
+					],
+					"query": [
+						{
+							"key": "lang",
+							"value": "es"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create ad",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.environment.set(\"adId\", responseJson.data.ad.ad_id);",
+							"",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response is an object\" , function(){",
+							"    pm.expect(responseJson.data).to.be.a('object');",
+							"});",
+							"",
+							"pm.test(\"Validate response data ad subject is Contenedores de cocina para guardar alimentos\", () => {",
+							"  pm.expect(responseJson.data.ad.subject).to.eql(\"Contenedores de cocina para guardar alimentos\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"/*let email = pm.environment.get('emailUser');",
+							"let pass = pm.environment.get('passUser');",
+							"let encoded = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(email+\":\"+pass));",
+							"//pm.environment.set(\"basic_encoded_verified\", encoded);",
+							"*/",
+							"",
+							"let encoding = pm.environment.get('basic_encoded_verified');",
+							"let url = pm.environment.get('base_url');",
+							"",
+							"pm.sendRequest({",
+							"    url: 'https://' + url + '/nga/api/v1.1/private/accounts?lang=es',",
+							"    method: 'POST',",
+							"    header: 'Authorization: Basic ' + encoding",
+							"}, function(err, res){",
+							"    let responseJson = res.json();",
+							"    pm.environment.set('token', responseJson.access_token);",
+							"});",
+							"",
+							"let uuid = pm.environment.get('uuid');",
+							"let token1 = pm.environment.get('token');",
+							"",
+							"let tokeUUIDToken = CryptoJS.enc.Base64.stringify(CryptoJS.enc.Utf8.parse(uuid+\":\"+token1));",
+							"",
+							"pm.environment.set('tokenUUID', tokeUUIDToken);",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"type": "text",
+						"value": "Basic {{tokenUUID}}"
+					},
+					{
+						"key": "x-source",
+						"value": "PHOENIX_DESKTOP",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"images\": \"3621999227.jpg\",\n    \"category\": \"3042\",\n    \"subject\": \"Contenedores de cocina para guardar alimentos\",\n    \"body\": \"Porta huevos de plástico con capacidad para 6 huevos de gallina, cierre perfecto y tapa plana apilable. Organiza y protege los huevos en el refrigerador. Organi Huevos Lockit es libre BPA y cuenta con tecnología lockit que evita que se abra el contenedor.\",\n    \"is_new\": \"1\",\n    \"price\": \"80\",\n    \"region\": \"11\",\n    \"municipality\": \"293\",\n    \"area\": \"7541\",\n    \"phone_hidden\": \"true\",\n    \"show_phone\": \"false\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/v2/accounts/{{uuid}}/up",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"v2",
+						"accounts",
+						"{{uuid}}",
+						"up"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update ad",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response is a json\" , function(){",
+							"    pm.expect(responseJson.data).to.be.a('object');",
+							"});",
+							"",
+							"pm.test(\"Validate response ad_id is equal to adId\", () => {",
+							"    const ad_id = pm.environment.get('adId');",
+							"    pm.expect(responseJson.data.ad.ad_id).to.eql(ad_id);",
+							"});",
+							"",
+							"pm.test(\"Validate response data price value is 90\", () => {",
+							"    pm.expect(responseJson.data.ad.price.value).to.eql(90);",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{tokenUUID}}",
+						"type": "text"
+					},
+					{
+						"key": "x-source",
+						"value": "PHOENIX_DESKTOP",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"images\": \"3621999227.jpg\",\n    \"category\": \"3042\",\n    \"subject\": \"Contenedores de cocina para guardar alimentos\",\n    \"body\": \"Porta huevos de plástico con capacidad para 6 huevos de gallina, cierre perfecto y tapa plana apilable. Organiza y protege los huevos en el refrigerador. Organi Huevos Lockit es libre BPA y cuenta con tecnología lockit que evita que se abra el contenedor.\",\n    \"is_new\": \"1\",\n    \"price\": \"90\",\n    \"region\": \"11\",\n    \"municipality\": \"293\",\n    \"area\": \"7541\",\n    \"phone_hidden\": \"true\",\n    \"show_phone\": \"false\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/accounts/{{uuid}}/up/{{adId}}",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"accounts",
+						"{{uuid}}",
+						"up",
+						"{{adId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete ad",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response is a json\", function(){",
+							"    pm.response.to.be.json;",
+							"});",
+							"",
+							"pm.test(\"Validate response is 403\", () => {",
+							"    pm.response.to.have.status(403);",
+							"});",
+							"",
+							"pm.test(\"Validate response includes error\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"error\");",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "tag:scmcoord.com,2013:api  {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "  {\"delete_reason\": {\"code\":\"5\"}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/nga/api/v1/{{userId}}/klfst/{{adId}}",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"nga",
+						"api",
+						"v1",
+						"{{userId}}",
+						"klfst",
+						"{{adId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User credits",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response includes balance\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"balance\");",
+							"});",
+							"",
+							"pm.test(\"Validate response Transactions is an array\", () => {",
+							"  pm.expect(responseJson.Transactions).to.be.a('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{base_url}}/credits/v1/private/accounts/11321810",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"credits",
+						"v1",
+						"private",
+						"accounts",
+						"11321810"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Info account",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.environment.set(\"userId\", responseJson.account.account_id);",
+							"",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response account is an object\" , function(){",
+							"    const email_verified = pm.environment.get('emailUser');",
+							"    pm.expect(responseJson.account.email).to.eql(email_verified);",
+							"});",
+							"",
+							"pm.test(\"Validate response account email_verified is true\", () => {",
+							"  pm.expect(responseJson.account.email_verified).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{basic_encoded_verified}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/nga/api/v1/private/accounts?lang=es",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"nga",
+						"api",
+						"v1",
+						"private",
+						"accounts"
+					],
+					"query": [
+						{
+							"key": "lang",
+							"value": "es"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Info account by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response account is an object\" , function(){",
+							"    const email_verified = pm.environment.get('emailUser');",
+							"    pm.expect(responseJson.account.email).to.eql(email_verified);",
+							"});",
+							"",
+							"pm.test(\"Validate response account email_verified is true\", () => {",
+							"  pm.expect(responseJson.account.email_verified).to.be.true;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "tag:scmcoord.com,2013:api {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/nga/api/v1/private/accounts/11321810?lang=es",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"nga",
+						"api",
+						"v1",
+						"private",
+						"accounts",
+						"11321810"
+					],
+					"query": [
+						{
+							"key": "lang",
+							"value": "es"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Counter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response includes unread\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"unread\");",
+							"});",
+							"",
+							"pm.test(\"Validate response unread is 0\", () => {",
+							"  pm.expect(responseJson.unread).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "tag:scmcoord.com,2013:api {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/nga/api/v1/api/users/{{uuid}}/counter?lang=es",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"nga",
+						"api",
+						"v1",
+						"api",
+						"users",
+						"{{uuid}}",
+						"counter"
+					],
+					"query": [
+						{
+							"key": "lang",
+							"value": "es"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List addresses",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response include addresses\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"addresses\");",
+							"});",
+							"",
+							"pm.test(\"Validate response addresses is an object\" , function(){",
+							"    pm.expect(responseJson.addresses).to.be.a('object');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{tokenUUID}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/addresses/v1/get",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"addresses",
+						"v1",
+						"get"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.environment.set('addressId', responseJson.addressID);",
+							"",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response include pong\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"addressID\");",
+							"});",
+							"",
+							"pm.test(\"Validate response addressID is a string\" , function(){",
+							"    pm.expect(responseJson.addressID).to.be.a('string');",
+							"});",
+							"",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{tokenUUID}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "contact",
+							"value": "Manuel Beltrán",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "7771070485",
+							"type": "text"
+						},
+						{
+							"key": "zipCode",
+							"value": "62000",
+							"type": "text"
+						},
+						{
+							"key": "exteriorInfo",
+							"value": "Zarco",
+							"type": "text"
+						},
+						{
+							"key": "interiorInfo",
+							"value": "28",
+							"type": "text"
+						},
+						{
+							"key": "region",
+							"value": "19",
+							"type": "text"
+						},
+						{
+							"key": "municipality",
+							"value": "918",
+							"type": "text"
+						},
+						{
+							"key": "area",
+							"value": "16258",
+							"type": "text"
+						},
+						{
+							"key": "alias",
+							"value": "Casa Zarco",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://{{base_url}}/addresses/v1/create",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"addresses",
+						"v1",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response include pong\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"message\");",
+							"});",
+							"",
+							"pm.test(\"Validate response addressID is a string\" , function(){",
+							"    pm.expect(responseJson.message).to.be.a('string');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{tokenUUID}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "https://{{base_url}}/addresses/v1/modify/{{addressId}}",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"addresses",
+						"v1",
+						"modify",
+						"{{addressId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete address",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Validate response include pong\", () => {",
+							"    pm.expect(pm.response.text()).to.include(\"deleted correctly\");",
+							"});",
+							"",
+							"pm.test(\"Validate response addressID is a string\" , function(){",
+							"    pm.expect(responseJson.message).to.be.a('string');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{tokenUUID}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{base_url}}/addresses/v1/delete/{{addressId}}",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"addresses",
+						"v1",
+						"delete",
+						"{{addressId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create alert",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Basic {{tokenUUID}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"ad_listing_service_filters\": {\n        \"region\": \"11\",\n        \"category_lv0\": \"1000\",\n        \"category_lv1\": \"1080\"\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://{{base_url}}/alerts/v1/private/account/{{uuid}}/alert",
+					"protocol": "https",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"alerts",
+						"v1",
+						"private",
+						"account",
+						"{{uuid}}",
+						"alert"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

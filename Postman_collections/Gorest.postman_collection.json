@@ -1,0 +1,485 @@
+{
+	"info": {
+		"_postman_id": "73e84e56-3619-4882-a93d-65caa5598662",
+		"name": "Gorest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response data is an array\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.data).to.be.a('array');",
+							"});",
+							"",
+							"pm.test(\"Validate response 200\", () => {",
+							"  pm.expect(pm.response.code).to.be.oneOf([200, 201,202]);",
+							"});",
+							"",
+							"pm.test(\"Validate response meta pagination page is equal to 1\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.meta.pagination.page).to.eql(1);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "posts",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response meta pagination limit is equal to 20\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.meta.pagination.limit).to.eql(20);",
+							"});",
+							"",
+							"pm.test(\"Validate response data [0] is an object\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.data[0]).to.be.a('object');",
+							"});",
+							"",
+							"pm.test(\"Validate response has body\" , function(){",
+							"    pm.response.to.have.body;",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/posts",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "comments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response is ok\", () => {",
+							"    pm.response.to.be.ok;",
+							"});",
+							"",
+							"pm.test(\"Response time is less than 300ms\", () => {",
+							"  pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});",
+							"",
+							"pm.test(\"Validate response has a header Content-Type\", () => {",
+							"  pm.response.to.have.header(\"Content-Type\");",
+							"});",
+							"",
+							"pm.test(\"Validate response meta pagination limit is equal to 20\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.meta.pagination.total).to.eql(0);",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/comments",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "todos",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response has body\", () => {",
+							"    pm.response.to.have.body;",
+							"});",
+							"",
+							"pm.test(\"Validate response data [0] is an object\", () => {",
+							"    pm.expect(responseJson.data[0]).to.be.a('object');",
+							"});",
+							"",
+							"pm.test(\"Validate response.data has length of 11\", () => {",
+							"    pm.expect(responseJson.data).to.have.lengthOf(11);",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/todos",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"todos"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate Content-Type header is application/json\", () => {",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');",
+							"});",
+							"",
+							"pm.test(\"Validate response.meta is null\", () => {",
+							"    pm.expect(responseJson.meta).to.be.null;",
+							"});",
+							"",
+							"pm.test(\"Validate response data is an object\", () => {",
+							"    pm.expect(responseJson.data).to.be.a('array');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "58b6411a0fce6ebbc16a22ce61541d15d383b7ca3b18c7256d462d49b334e579",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Ari\", \n    \"gender\":\"Female\", \n    \"email\":\"ari1@gmail.com\",\n    \"status\":\"active\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/users",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get user by id",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response is 404\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Validate response.meta is null\", () => {",
+							"    pm.expect(responseJson.meta).to.be.null;",
+							"});",
+							"",
+							"pm.test(\"Validate response data message is equal to Resource not found\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.data.message).to.eql('Resource not found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/users/4054",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"users",
+						"4054"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "set user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Validate response has body\", () => {",
+							"    pm.response.to.have.body;",
+							"});",
+							"",
+							"pm.test(\"Validate response is 404\", () => {",
+							"    pm.response.to.have.status(404);",
+							"});",
+							"",
+							"pm.test(\"Validate response data message is equal Resource not found\", () => {",
+							"    const responseJson = pm.response.json();",
+							"    pm.expect(responseJson.data.message).to.eql('Resource not found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "58b6411a0fce6ebbc16a22ce61541d15d383b7ca3b18c7256d462d49b334e579",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\":\"Ari\",\n    \"gender\":\"Female\",\n    \"email\":\"ari@mail.com\",\n    \"status\":\"active\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/users/4054",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"users",
+						"4054"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response has body\", () => {",
+							"    pm.response.to.have.body;",
+							"});",
+							"",
+							"pm.test(\"Validate response.meta is null\", () => {",
+							"    pm.expect(responseJson.meta).to.be.null;",
+							"});",
+							"",
+							"pm.test(\"Validate response data message is equal to Resource not found\", () => {",
+							"    pm.expect(responseJson.data.message).to.eql('Resource not found');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "58b6411a0fce6ebbc16a22ce61541d15d383b7ca3b18c7256d462d49b334e579",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/users/1000",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"users",
+						"1000"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create post",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const responseJson = pm.response.json();",
+							"pm.test(\"Validate response.meta is null\", () => {",
+							"    pm.expect(responseJson.meta).to.be.null;",
+							"});",
+							"",
+							"pm.test(\"Validate response data user_id is equal to 3172\", () => {",
+							"    pm.expect(responseJson.data.user_id).to.eql(3172);",
+							"});",
+							"",
+							"pm.test(\"Validate response data [0] is an object\", () => {",
+							"    pm.expect(responseJson.data).to.be.a('object');",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "58b6411a0fce6ebbc16a22ce61541d15d383b7ca3b18c7256d462d49b334e579",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    //1282\n    //\"user\":4054, \n    \"title\":\"Title1\", \n    \"body\":\"Lorem\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://gorest.co.in/public/v1/users/3172/posts",
+					"protocol": "https",
+					"host": [
+						"gorest",
+						"co",
+						"in"
+					],
+					"path": [
+						"public",
+						"v1",
+						"users",
+						"3172",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
