@@ -6,7 +6,7 @@ This repository contains the rest assured tests created for testing the APIs of 
 
 ## Installation
 
-Just clone and run the API_test.java file.
+Just clone the project and run the src/test/java/API_test.java file.
 
 ## Contributing
 Ariana Franco Flores
