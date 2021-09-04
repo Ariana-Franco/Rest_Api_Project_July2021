@@ -14,11 +14,15 @@ Ariana Franco Flores
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 Please make sure to update tests as appropriate.
 
-## Postman Project
+## Postman collections highlights
 
 ![Screenshot from 2021-09-04 00-14-19](https://user-images.githubusercontent.com/75339687/132083383-02e2fb96-86c9-49ed-a291-710b4476b406.png)
 
 ![Screenshot from 2021-09-04 00-15-29](https://user-images.githubusercontent.com/75339687/132083404-13cbd3cc-98b2-475c-8dcf-b9cf72873afa.png)
+
+## Allure Report
+![Screenshot from 2021-09-04 00-21-38](https://user-images.githubusercontent.com/75339687/132083562-85dde965-194b-42a0-91ae-3c4dc3c15396.png)
+
 
 ## Additional Info
 All the Postman Project is located into the postman file in this repository.
