@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="RestApi1" tests="1" skipped="0" failures="0" errors="0" timestamp="2020-08-22T04:41:19" hostname="YurishamasMac" time="6.076">
+  <properties/>
+  <testcase name="t01_get_token_fail" classname="RestApi1" time="6.076"/>
+  <system-out><![CDATA[Request method:	POST
+Request URI:	https://webapi.segundamano.mx/nga/api/v1.1/private/accounts
+Proxy:			<none>
+Request params:	<none>
+Query params:	<none>
+Form params:	<none>
+Path params:	<none>
+Headers:		Accept=*/*
+				Content-Type=application/x-www-form-urlencoded; charset=ISO-8859-1
+Cookies:		<none>
+Multiparts:		<none>
+Body:			<none>
+Status expected: 400
+Result: 400
+Error Code expected: VALIDATION FAILED 
+Result: VALIDATION_FAILED
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
